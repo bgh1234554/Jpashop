@@ -1,4 +1,4 @@
-package jpabook.jpashop;
+package jpabook.deprecated;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class Member {
+public class MemberOld {
     @Id @GeneratedValue
     private Long id;
     private String username;

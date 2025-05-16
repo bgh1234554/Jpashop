@@ -21,7 +21,7 @@ class ItemServiceTest {
 
     @Test
     public void 아이템추가() {
-        //Given
+        //Given - Item은 추상클래스니까
         Book book = new Book();
         book.setName("JPA");
         //When

@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}" />
+<body>
+<!--model 에 담아둔 상품 목록인 items 를 꺼내서 상품 정보를 출력-->
+<div class="container">
+  <div th:replace="~{fragments/bodyHeader :: bodyHeader}"/>
+  <div>
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>#</th>
+        <th>상품명</th>
+        <th>가격</th>
+        <th>재고수량</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="item : ${items}">
+        <td th:text="${item.id}"></td>
+        <td th:text="${item.name}"></td>
+        <td th:text="${item.price}"></td>
+        <td th:text="${item.stockQuantity}"></td>
+        <td>
+<!--
+1. 수정 버튼을 선택하면 /items/{itemId}/edit URL을 GET 방식으로 요청
+2. 그 결과로 updateItemForm() 메서드를 실행하는데 이 메서드는 itemService.findOne(itemId) 를
+호출해서 수정할 상품을 조회
+3. 조회 결과를 모델 객체에 담아서 뷰( items/updateItemForm )에 전달
+-->
+          <a href="#" th:href="@{/items/{id}/edit (id=${item.id})}"
+             class="btn btn-primary" role="button">수정</a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div th:replace="~{fragments/footer :: footer}"/></div> <!-- /container -->
+</body>
+</html>

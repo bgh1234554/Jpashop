@@ -28,4 +28,13 @@ public class ItemService {
     public Item findOne(Long itemId){
         return itemRepository.findOne(itemId);
     }
+
+    //영속성 컨텍스트가 알아서 UPDATE 쿼리를 날려주도록 바꿔주기
+    @Transactional
+    public void updateItem(Long id, String name, int price, int stockQuantity) {
+        Item item = itemRepository.findOne(id);
+        item.setName(name);
+        item.setPrice(price);
+        item.setStockQuantity(stockQuantity);
+    }
 }

@@ -24,6 +24,7 @@ public class MemberService {
     회원 가입
      */
     @Transactional //정보를 변경하는 거니까
+    //여기에서는 readOnly=false로 적용된다. 위쪽 어노테이션이 우선 적용된다.
     public Long join(Member member){
         validateDuplicateMember(member);
         memberRepository.save(member);

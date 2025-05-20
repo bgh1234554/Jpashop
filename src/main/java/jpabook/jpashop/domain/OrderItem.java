@@ -2,13 +2,16 @@ package jpabook.jpashop.domain;
 
 import jakarta.persistence.*;
 import jpabook.jpashop.domain.item.Item;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "order_item")
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderItem {
     @Id @GeneratedValue
     @Column(name = "order_item_id")
@@ -26,6 +29,7 @@ public class OrderItem {
     private int count; //주문 수량
 
     //생성 메서드 - 주문 상품, 가격, 수량 정보를 사용해서 주문상품 엔티티를 생성
+    //주문 생성에 대한 복잡한 정보 응집 (주문 생성에 관한 정보를 여기서 만들 수 있다)
     public static OrderItem createOrderItem(Item item, int orderPrice, int count){
         OrderItem orderItem = new OrderItem();
         orderItem.setItem(item);

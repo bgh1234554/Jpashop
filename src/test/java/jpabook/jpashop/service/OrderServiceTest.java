@@ -79,6 +79,7 @@ class OrderServiceTest {
         //DB에 주문 상태가 취소로 바뀌었는지 확인한다.
         Order getOrder = orderRepository.findOne(orderId);
         assertEquals(OrderStatus.CANCEL,getOrder.getStatus(),"주문 취소시 CANCEL 리턴");
+        //주문 수량이 원상 복구되었는지 확인한다.
         assertEquals(10,item.getStockQuantity(),"재고 수량 다시 증가");
     }
 

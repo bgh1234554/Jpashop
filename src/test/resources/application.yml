@@ -1,4 +1,5 @@
 #spring:
+#  스프링부트는 별도의 설정이 없어도 메모리 모드로 돌린다.
 #  datasource:
 #    url: jdbc:h2:mem:testdb
 #    username: sa
@@ -9,7 +10,7 @@
 #      ddl-auto: create
 #    properties:
 #      hibernate:
-#        show_sql: true
+##        show_sql: true
 #        format_sql: true
 #    open-in-view: false
 logging:

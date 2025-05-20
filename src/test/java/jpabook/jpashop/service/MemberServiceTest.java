@@ -18,12 +18,13 @@ class MemberServiceTest {
     MemberRepository memberRepository;
 
     @Test
+    //@Rollback(false)
     public void 회원가입() throws Exception {
         //Given
         Member member = new Member();
         member.setName("kim");
         //When
-        Long saveId = memberService.join(member);
+        Long saveId = memberService.join(member); //INSERT 쿼리 안날라감. flush가 안되기 때문에.
         //Then
         assertEquals(member, memberRepository.findOne(saveId));
     }
@@ -42,5 +43,8 @@ class MemberServiceTest {
         //member2의 회원가입을 시도했을 때, 우리가 정한 예외 클래스가 나오는지 테스트
         assertThrows(IllegalStateException.class,
                 () -> memberService.join(member2));
+
+        //여기 오면 안되는데 오면 테스트 케이스를 잘못 잘성한 것이니까
+        fail("Exception must be thrown");
     }
 }

@@ -32,19 +32,22 @@ public class OrderService {
         delivery.setAddress(member.getAddress());
         delivery.setStatus(DeliveryStatus.READY);
 
-        //주문 상품 생성
+        //주문 상품 생성 - 기본 생성자는 protected로 만들어서 다른 방법으로 만들 수 없도록 강제한다
         OrderItem orderItem = OrderItem.createOrderItem(item,item.getPrice(),count);
         //주문 생성 - createOrder 안에 재고 수량 정리가 들어있다.
         Order order = Order.createOrder(member,delivery,orderItem);
 
         orderRepository.save(order);
+        //Order 엔티티에 있는 Casecade 옵션 때문에 OrderItem과 Delivery 객체가 자동으로 Cascade 된다
         return order.getId();
     }
 
     //주문 취소
     @Transactional
     public void cancelOrder(Long orderId){
+        //주문 엔티티 조회
         Order order = orderRepository.findOne(orderId);
+        //주문 취소
         order.cancel();
     }
 

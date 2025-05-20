@@ -27,7 +27,7 @@ public class OrderRepository {
     }
 
     //검색 주문 조건
-    public List<Order> findAll(OrderSearch orderSearch) {
+    public List<Order> findAllByString(OrderSearch orderSearch) {
         //QueryDSL을 통해 자바문법답게 쿼리를 만들 수 있으나,
         //아직 안배웠으므로, JPQL과 JPQL Criteria로 만족하자.
         //language=JPAQL

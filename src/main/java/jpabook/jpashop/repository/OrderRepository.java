@@ -84,4 +84,97 @@ public class OrderRepository {
         TypedQuery<Order> query = em.createQuery(cq).setMaxResults(1000); //최대 1000건
         return query.getResultList();
     }
+    /**
+     * ✅ 1. QueryDSL 환경 설정 (Gradle 기준)
+     * ① Gradle 의존성 추가
+     *
+     * build.gradle에 아래 코드 추가해:
+     *
+     * plugins {
+     *     id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+     * }
+     *
+     * dependencies {
+     *     implementation "com.querydsl:querydsl-jpa"
+     *     annotationProcessor "com.querydsl:querydsl-apt"
+     *     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+     *     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+     * }
+     *
+     * def querydslDir = "src/main/generated"
+     *
+     * querydsl {
+     *     jpa = true
+     *     querydslSourcesDir = querydslDir
+     * }
+     *
+     * sourceSets {
+     *     main.java.srcDirs += [ querydslDir ]
+     * }
+     *
+     * tasks.withType(JavaCompile) {
+     *     options.annotationProcessorGeneratedSourcesDirectory = file(querydslDir)
+     * }
+     *
+     * ② Q파일 생성 (한번만 해주면 됨)
+     *
+     * ./gradlew clean compileQuerydsl
+     *
+     * QOrder, QMember 등의 클래스가 src/main/generated에 생길 거야.
+     * ✅ 2. JPAQueryFactory Bean 등록
+     *
+     * 스프링에서 @Configuration 클래스에 아래처럼 Bean 등록:
+     *
+     * @Configuration
+     * public class QuerydslConfig {
+     *
+     *     @PersistenceContext
+     *     private EntityManager em;
+     *
+     *     @Bean
+     *     public JPAQueryFactory queryFactory() {
+     *         return new JPAQueryFactory(em);
+     *     }
+     * }
+     *
+     * ✅ 3. OrderRepository에 QueryDSL 코드 추가
+     *
+     * @RequiredArgsConstructor
+     * @Repository
+     * public class OrderQueryRepository {
+     *
+     *     private final JPAQueryFactory queryFactory;
+     *
+     *     public List<Order> findAll(OrderSearch orderSearch) {
+     *         QOrder order = QOrder.order;
+     *         QMember member = QMember.member;
+     *
+     *         return queryFactory
+     *                 .selectFrom(order)
+     *                 .join(order.member, member)
+     *                 .where(
+     *                         statusEq(orderSearch.getOrderStatus()),
+     *                         nameLike(orderSearch.getMemberName())
+     *                 )
+     *                 .limit(1000)
+     *                 .fetch();
+     *     }
+     *
+     *     private BooleanExpression statusEq(OrderStatus status) {
+     *         return status != null ? QOrder.order.status.eq(status) : null;
+     *     }
+     *
+     *     private BooleanExpression nameLike(String name) {
+     *         return StringUtils.hasText(name) ? QOrder.order.member.name.contains(name) : null;
+     *     }
+     * }
+     *
+     *     🔍 BooleanExpression을 반환하는 메서드들을 이용하면 조건이 null일 경우 무시되어 자동으로 동적 쿼리가 만들어져!
+     *
+     * ✅ 정리
+     * 항목	내용
+     * 설정	build.gradle에 querydsl 관련 설정, Q 클래스 생성
+     * 핵심	JPAQueryFactory로 쿼리 작성, where() 조건은 BooleanExpression 조합
+     * 장점	컴파일 시 오류 잡기, 자동완성, 동적 쿼리 깔끔
+     */
 }

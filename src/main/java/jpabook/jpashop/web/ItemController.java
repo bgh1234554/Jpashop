@@ -24,6 +24,7 @@ public class ItemController {
     @PostMapping(value="/items/new")
     public String create(BookForm form){
         //web에서 정보를 받아 service를 이용해 DB에 저장
+        //실제로는 setter를 사용하기보다는 create 메서드를 만들어 객체를 생성하는 것이 좋다.
         Book book = new Book();
         book.setName(form.getName());
         book.setPrice(form.getPrice());
@@ -45,6 +46,7 @@ public class ItemController {
 
     //상품 수정 폼 - 기존 상품 정보를 수정하기 위해 DB에서 현 정보를 불러온다//
     @GetMapping(value = "/items/{itemId}/edit")
+    //ID는 변경될 수 있으니까 @PathVariable 사용
     public String updateItemForm(@PathVariable("itemId") Long itemId, Model model){
         Book item = (Book) itemService.findOne(itemId);
         BookForm form = new BookForm();
@@ -58,10 +60,33 @@ public class ItemController {
         model.addAttribute("form", form);
         return "items/updateItemForm";
     }
+    /*
+    만약, 여러 품목을 지원해야 한다면 보통 타입 별로 수정폼을 다르게 만든다.
+
+    @GetMapping("/items/{itemId}/edit/book")
+    public String updateBookForm(@PathVariable Long itemId, Model model) {
+        Book book = (Book) itemService.findOne(itemId);
+        BookForm form = new BookForm();
+        // ...폼에 book 정보 세팅
+        model.addAttribute("form", form);
+        return "items/updateBookForm";
+    }
+
+    @GetMapping("/items/{itemId}/edit/album")
+    public String updateAlbumForm(@PathVariable Long itemId, Model model) {
+        Album album = (Album) itemService.findOne(itemId);
+        AlbumForm form = new AlbumForm();
+        // ...폼에 album 정보 세팅
+        model.addAttribute("form", form);
+        return "items/updateAlbumForm";
+    }
+
+     */
     //상품 수정 - 정보를 바탕으로 진짜 DB에 수정된 정보를 올리는 것//
 //    merge 사용 버전 - 사용하지 않는 것을 권장
 //    @PostMapping(value = "/items/{itemId}/edit")
 //    public String updateItem(@ModelAttribute("form") BookForm form){
+        //컨트롤러에서 어설프게 Book을 만들지 않기
 //        Book book = new Book();
 //        book.setId(form.getId());
 //        book.setName(form.getName());

@@ -42,6 +42,7 @@
         <td th:text="${item.status}"></td>
         <td th:text="${item.orderDate}"></td>
         <td>
+<!--          order의 status가 ORDER인 경우에만 노출되도록 변경-->
           <a th:if="${item.status.name() == 'ORDER'}" href="#"
              th:href="'javascript:cancel('+${item.id}+')'"
              class="btn btn-danger">CANCEL</a>

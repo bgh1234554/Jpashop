@@ -31,6 +31,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-devtools'
     //쿼리 파라미터 로그 남기기
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.11.0'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     //재시작 없이 알아서 내용을 반영해준다.
     //Build -> Recompile을 하면 반영된다.
     compileOnly 'org.projectlombok:lombok'

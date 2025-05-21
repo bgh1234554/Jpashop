@@ -20,6 +20,7 @@
       <tr th:each="member : ${members}">
         <td th:text="${member.id}"></td>
         <td th:text="${member.name}"></td>
+<!--        ? -> address가 null일 경우 더 이상 출력하지 않는다. -->
         <td th:text="${member.address?.city}"></td>
         <td th:text="${member.address?.street}"></td>
         <td th:text="${member.address?.zipcode}"></td>

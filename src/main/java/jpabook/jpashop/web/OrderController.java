@@ -38,6 +38,7 @@ public class OrderController {
     }
 
     @PostMapping(value="/order")
+    //@RequestParam - form submit 방식. orderForm.html에 id로 선언된 변수 이름 지정
     public String order(@RequestParam("memberId") Long memberId, @RequestParam("itemId") Long itemId,
                         @RequestParam("count") int count){
         //상품 정보를 받아 주문해야 하니까, 주문을 하기 위한 정보를 form에서 받아 실행한다
@@ -55,6 +56,10 @@ public class OrderController {
 
     //주문 목록 검색, 취소//
     @GetMapping(value="/orders")
+    //@ModelAttribute - 요청 파라미터를 객체에 바인딩하고, 동시에 해당 객체를 Model에 자동 등록
+    //알아서 Model에 자동으로 담아준다는 뜻
+    //GET /orders?orderStatus=ORDER&memberName=김철수
+    //-> OrderSearch 클래스의 setOrderStatus()와 setMemberName()을 자동 호출해서 값 넣어줘.
     public String orderList(@ModelAttribute("orderSearch") OrderSearch orderSearch, Model model){
         List<Order> orders = orderService.findOrders(orderSearch);
         model.addAttribute("orders", orders);

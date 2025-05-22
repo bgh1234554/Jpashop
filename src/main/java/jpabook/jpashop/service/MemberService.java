@@ -48,4 +48,11 @@ public class MemberService {
     public Member findOne(Long memberId){
         return memberRepository.findOne(memberId);
     }
+
+    @Transactional
+    //변경 감지를 사용해서 커밋 시점에 자동으로 엔티티 정보 수정
+    public void update(Long id, String name) {
+        Member member = memberRepository.findOne(id);
+        member.setName(name);
+    }
 }

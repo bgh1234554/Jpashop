@@ -15,8 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 /*
 주문 + 배송정보 + 회원을 조회하는 API
+섹션 3은 xxToOne관계만 다룬다.
 
 ManyToOne, OneToOne (둘다 지연 로딩)
 Order -> Member
@@ -56,11 +59,12 @@ public class OrderSimpleApiController {
      *      order 조회 1번(order 조회 결과 수가 N이 된다.)
      *      order -> member 지연 로딩 조회 N 번
      *      order -> delivery 지연 로딩 조회 N 번
+     *      당연히 실무에서 쓸 때는 Result에 감싸서 반환해야 한다.
      */
     @GetMapping("/api/v2/simple-orders")
     public List<SimpleOrderDto> ordersV2(){
         List<Order> orders = orderRepository.findAllByString(new OrderSearch());
-        List<SimpleOrderDto> result = orders.stream().map(SimpleOrderDto::new).toList();
+        List<SimpleOrderDto> result = orders.stream().map(SimpleOrderDto::new).collect(toList());
         return result;
     }
 
@@ -81,6 +85,8 @@ public class OrderSimpleApiController {
         }
     }
 
+    //V1과 V2에 대해 공통적으로 발생하는 문제 - 쿼리가 너무 많이 나간다
+
     /**
      * V3 - 엔티티를 DTO로 변환 with fetch join
      * 쿼리가 한번만 나가기 때문에 성능이 최적화가 된다.
@@ -99,7 +105,16 @@ public class OrderSimpleApiController {
     @GetMapping("/api/v4/simple-orders")
     public List<OrderSimpleQueryDto> ordersV4(){
         return orderSimpleQueryRepository.findOrderDtos();
+        //쿼리를 확인해보면, select 절에서 가져오는 데이터의 양이 다름을 확인할 수 있다.
+        //말만 리포지토리이지, API 스펙 자체가 레포에 들어와 있는 것이다.
     }
+
+    /*
+    V3 vs V4
+    재사용성에서는 V3가 훨씬 좋다. 다른 Api에서도 findAllWithMemberDeilvery를 사용할 수 있으니까...
+    다만 V4는 재사용성이 좋지 않지만 성능 최적화에서는 좋다.
+    실무에서는 유지보수를 위해 화면과 연결되어 있는 쿼리용 레포와 DTO를 위한 패키지를 따로 만든다.
+     */
 }
 /**
  * 쿼리 방식 선택 권장 순서

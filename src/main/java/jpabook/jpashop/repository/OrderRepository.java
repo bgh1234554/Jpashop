@@ -179,11 +179,12 @@ public class OrderRepository {
      */
 
     //JPA 2편 섹션 3 - V3 용 OrderRepository 추가 코드
+    //LAZY 그런거 상관없이 검색할 때 연관된 테이블을 한번에 다 긁어온다. fetch join 이니까
     public List<Order> findAllWithMemberDelivery(){
         return em.createQuery(
                 "select o from Order o"+
-                        "join fetch o.member m" +
-                        "join fetch o.delivery d", Order.class
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d", Order.class
         ).getResultList();
     }
 }

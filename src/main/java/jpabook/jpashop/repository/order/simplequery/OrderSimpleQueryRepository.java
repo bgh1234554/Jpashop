@@ -12,8 +12,9 @@ public class OrderSimpleQueryRepository {
     public final EntityManager em;
 
     public List<OrderSimpleQueryDto> findOrderDtos(){
-        return em.createQuery("select new jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto(o.id, m.name, \n" +
-                "o.orderDate, o.status, d.address)" +
+        //검색 결과를 DTO로 반환할 때 new를 사용한다.
+        return em.createQuery("select new jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto" +
+                "(o.id, m.name, o.orderDate, o.status, d.address)" +
                 " from Order o" +
                 " join o.member m" +
                 " join o.delivery d", OrderSimpleQueryDto.class).getResultList();

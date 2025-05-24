@@ -154,6 +154,8 @@ public class MemberApiController {
  * 실무에서는 API 응답 구조를 더 명확하게 하고 확장성을 확보하기 위해
  * 보통 아래처럼 data, error, meta 각각을 포함하는 **공통 응답 포맷(Response Wrapper DTO)**을 만들어서 사용해.
  * ✅ 실무에서 자주 쓰는 공통 응답 객체 구조 예시
+ * Result<T>는 응답 데이터의 구조를 감싸서 내용을 정리하는 것이라면,
+ * 학원에서 배웠던 ResponseEntity<T>는 HTTP 응답 전체, 즉, 상태코드, 헤더, 본문 등 전반적인 것을 제어할 때 사용한다.
  *
  * @Data
  * @AllArgsConstructor

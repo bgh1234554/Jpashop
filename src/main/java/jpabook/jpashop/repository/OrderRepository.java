@@ -177,4 +177,13 @@ public class OrderRepository {
      * 핵심	JPAQueryFactory로 쿼리 작성, where() 조건은 BooleanExpression 조합
      * 장점	컴파일 시 오류 잡기, 자동완성, 동적 쿼리 깔끔
      */
+
+    //JPA 2편 섹션 3 - V3 용 OrderRepository 추가 코드
+    public List<Order> findAllWithMemberDelivery(){
+        return em.createQuery(
+                "select o from Order o"+
+                        "join fetch o.member m" +
+                        "join fetch o.delivery d", Order.class
+        ).getResultList();
+    }
 }

@@ -1,6 +1,5 @@
 package jpabook.jpashop.api;
 
-import jakarta.persistence.Id;
 import jakarta.validation.Valid;
 import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.service.MemberService;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestController
+@RestController //@Controller + @ResponseBody (데이터 자체를 JSON이나 XML로 보낼 때 사용)
 @RequiredArgsConstructor
 public class MemberApiController {
     private final MemberService memberService;
@@ -68,6 +67,8 @@ public class MemberApiController {
     @PostMapping("/api/v2/members")
     public CreateMemberResponse saveMemberV2(@RequestBody @Valid CreateMemberRequest request){
         Member member = new Member();
+        //이렇게 하면 엔티티의 객체 정보가 바뀌어도 setter 메서드 이름만 바꾸면 되고,
+        //중간에서 매핑만 해주면 되기 때문에 상대적으로 안정적으로 운영될 수 있다.
         member.setName(request.getName());
         Long id = memberService.join(member);
         return new CreateMemberResponse(id);
@@ -75,10 +76,13 @@ public class MemberApiController {
 
     /**
      * 회원 정보 수정 API
+     * 등록, 수정의 경우에는 요구 데이터가 다를 수 있기 때문에 별도의 DTO를 만드는 것이 좋다.
      */
     @PutMapping("/api/v2/members/{id}")
-    public UpdateMemberResponse updateMemberV2(@PathVariable("id") Long id,
-                                               @RequestBody @Valid UpdateMemberRequest request) {
+    public UpdateMemberResponse updateMemberV2(
+            @PathVariable("id") Long id,
+            @RequestBody @Valid UpdateMemberRequest request) {
+        //수정은 가급적이면 변경 감지!
         //MemberSerivce의 update 메서드를 이용해 아이디의 이름을 업데이트
         memberService.update(id, request.getName());
         Member findMember = memberService.findOne(id);
@@ -86,7 +90,7 @@ public class MemberApiController {
         return new UpdateMemberResponse(findMember.getId(),findMember.getName());
     }
 
-    @Data
+    @Data //DTO는 크게 로직이 있는 것이 아니라서 가볍게 롬복으로 객체를 만들어 버린다.
     static class UpdateMemberRequest{
         private String name;
     }
@@ -99,6 +103,7 @@ public class MemberApiController {
     }
 
     //회원 조회 API//
+
     /**
      * 조회 V1: 응답 값으로 "엔티티를 직접 외부에 노출"한다.
      * 문제점
@@ -116,6 +121,7 @@ public class MemberApiController {
     @GetMapping("/api/v1/members")
     public List<Member> membersV1(){
         return memberService.findMembers();
+        //array를 반환하면 스펙 확장이 안되는 등 유연성이 떨어진다.
     }
     //V2 - 응답 값으로 엔티티가 아닌 별도의 DTO 반환
     @GetMapping("/api/v2/members")
@@ -125,12 +131,13 @@ public class MemberApiController {
         List<MemberDto> collect = findMembers.stream()
                 .map(m->new MemberDto(m.getName()))
                 .collect(Collectors.toList());
-        return new Result(collect);
+        return new Result(collect.size(),collect);
     }
 
     @Data
     @AllArgsConstructor
     static class Result<T>{
+        private int count;
         private T data;
     }
     @Data

@@ -9,7 +9,11 @@ spring:
       ddl-auto: create #스프링 시작할 때 처음부터 다시 생성
     properties:
       hibernate:
-#      show_sql: true System.out으로 상태 찍는것
+        default_batch_fetch_size: 1000
+        #전체 batch_size 설정용. 보통 100에서 1000 사이를 추천한다.
+        # 개인은 @Batchsize를 적용한다.
+        # 컬렉션은 컬렉션 필드에, 엔티티는 엔티티 클래스에 적용
+      #      show_sql: true System.out으로 상태 찍는것
       format_sql: true
   #스프링부트 타임리프 기본 설정
   thymeleaf:

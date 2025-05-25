@@ -187,4 +187,27 @@ public class OrderRepository {
                         " join fetch o.delivery d", Order.class
         ).getResultList();
     }
+
+    //섹션 4의 V3용 메서드
+    public List<Order> findAllWithItem() {
+        return em.createQuery(
+                //사실 최신 Hibernate에서는 distinct 키워드가 필요 없다.
+                "select distinct o from Order o"+
+                        " join fetch o.member m"+
+                        " join fetch o.delivery d"+
+                        " join fetch o.orderItems oi"+
+                        " join fetch oi.item i", Order.class)
+                .getResultList();
+    }
+
+    //섹션 4의 V3.1용 메서드
+    public List<Order> findAllWithMemberDelivery(int offset, int limit){
+        return em.createQuery(
+                "select o from Order o"+
+                        " join fetch o.member m"+
+                        " join fetch o.delivery d", Order.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+    }
 }

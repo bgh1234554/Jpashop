@@ -2,6 +2,7 @@ package jpabook.jpashop.api;
 
 import jpabook.jpashop.domain.*;
 import jpabook.jpashop.repository.OrderRepository;
+import jpabook.jpashop.repository.order.query.OrderQueryRepository;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class OrderApiController {
             //LAZY 로딩이기 때문에 강제로 초기화를 해준다.
             order.getMember().getName();
             order.getDelivery().getAddress();
+            //OrderItems의 초기화
             List<OrderItem> orderItems = order.getOrderItems();
             orderItems.stream().forEach(o->o.getItem().getName());
         }
@@ -89,11 +91,12 @@ public class OrderApiController {
     /**
      * V3 - DTO와 fetch join 동시 이용
      * 페치 조인으로 SQL이 1번만 실행됨
-     * 다만 페이징이 불가능하다는 단점이 있다.
+     * 다만 row의 양이 뻥튀기가 되기 때문에 페이징이 불가능하다는 단점이 있다.
      * 또한 컬렉션 페치 조인은 1개만 사용할 수 있다.
      */
     @GetMapping("/api/v3/orders")
     public List<OrderDto> ordersV3(){
+        //사실 v2와 코드 자체는 똑같다
         List<Order> orders = orderRepository.findAllWithItem();
         List<OrderDto> result = orders.stream()
                 .map(OrderDto::new).toList();
@@ -181,11 +184,22 @@ public class OrderApiController {
 
             // ...
         }
-        | 붙이는 위치                    | 설명                                                     |
+        | 붙이는 위치               | 설명                                                        |
         | ------------------------- | ------------------------------------------------------ |
-        | `@OneToMany` 연관 필드        | 컬렉션(batch로 묶어서 조회됨)                                    |
+        | `@OneToMany` 연관 필드   | 컬렉션(batch로 묶어서 조회됨)                                      |
         | `@ManyToOne`, `@OneToOne` | 지연 로딩 프록시를 여러 개 한 번에 조회 가능 (예: `member`, `delivery` 등) |
-        | 클래스 위                     | 해당 엔티티의 **모든 지연 로딩 필드**에 적용됨                           |
+        | 클래스 위                | 해당 엔티티의 **모든 지연 로딩 필드**에 적용됨                            |
 
      */
+
+    /**
+     * V4 - JPA에서 DTO로 직접 조회
+     * 컬렉션이 들어갔을 때 쿼리용 DTO 레포를 어떻게 만들 수 있을까?
+     */
+    private final OrderQueryRepository orderQueryRepository;
+
+    @GetMapping("api/v4/orders")
+    public List<OrderQueryDto> ordersV4(){
+        return orderQueryRepository.findOrderQueryDtos();
+    }
 }

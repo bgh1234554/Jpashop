@@ -192,10 +192,11 @@ public class OrderRepository {
     public List<Order> findAllWithItem() {
         return em.createQuery(
                 //사실 최신 Hibernate에서는 distinct 키워드가 필요 없다.
-                "select distinct o from Order o"+
+                //실무에서는 QueryDSL로 매우 쉽게 만들 수 있다
+                        "select distinct o from Order o"+
                         " join fetch o.member m"+
                         " join fetch o.delivery d"+
-                        " join fetch o.orderItems oi"+
+                        " join fetch o.orderItems oi"+ // 데이터 양이 여기서 뻥튀기된다
                         " join fetch oi.item i", Order.class)
                 .getResultList();
     }

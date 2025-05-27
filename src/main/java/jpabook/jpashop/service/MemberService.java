@@ -2,8 +2,8 @@ package jpabook.jpashop.service;
 
 import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.repository.MemberRepository;
+import jpabook.jpashop.repository.MemberRepositoryOld;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +18,7 @@ public class MemberService {
 
     //생성자 주입 방식을 권장
     //변경 불가능한 안전한 객체 생성 가능
+    //private final MemberRepositoryOld memberRepository;
     private final MemberRepository memberRepository;
 
     /*
@@ -46,13 +47,13 @@ public class MemberService {
     }
 
     public Member findOne(Long memberId){
-        return memberRepository.findOne(memberId);
+        return memberRepository.findById(memberId).get();
     }
 
     @Transactional
     //변경 감지를 사용해서 커밋 시점에 자동으로 엔티티 정보 수정
     public void update(Long id, String name) {
-        Member member = memberRepository.findOne(id);
+        Member member = memberRepository.findById(id).get();
         member.setName(name);
     }
 }

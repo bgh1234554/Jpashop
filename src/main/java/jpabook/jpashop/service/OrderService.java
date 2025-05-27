@@ -4,6 +4,7 @@ import jpabook.jpashop.domain.*;
 import jpabook.jpashop.domain.item.Item;
 import jpabook.jpashop.repository.ItemRepository;
 import jpabook.jpashop.repository.MemberRepository;
+import jpabook.jpashop.repository.MemberRepositoryOld;
 import jpabook.jpashop.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.List;
 public class OrderService {
     private final ItemRepository itemRepository;
     private final MemberRepository memberRepository;
+//    private final MemberRepositoryOld memberRepository;
     private final OrderRepository orderRepository;
 
     //신규 주문
@@ -24,7 +26,7 @@ public class OrderService {
     @Transactional
     public Long order(Long memberId, Long itemId, int count){
         //회원과 아이템 정보를 DB에서 찾는다
-        Member member = memberRepository.findOne(memberId);
+        Member member = memberRepository.findById(memberId).get();
         Item item = itemRepository.findOne(itemId);
 
         //배송 정보를 생성한다.

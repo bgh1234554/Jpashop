@@ -235,6 +235,8 @@ public class OrderApiController {
     public List<OrderQueryDto> ordersV6(){
         List<OrderFlatDto> flats = orderQueryRepository.findAllByDto_flat();
 
+        //OrderFlatDto를 OrderQueryDto로 반환하기 위한 복잡한 노가다
+        //직접 수동으로 중복을 걸러내야 한다.
         return flats.stream()
                 .collect(groupingBy(o->new OrderQueryDto(o.getOrderId(),
                         o.getName(), o.getOrderDate(), o.getOrderStatus(), o.getAddress()),
